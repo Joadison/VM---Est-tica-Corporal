@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "export": "next build && next export",
     "start": "next start",
     "lint": "next lint"
   },
@@ -28,13 +29,11 @@
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "express": "^4.19.2",
-    "google-maps": "^4.3.3",
     "ical-generator": "^7.1.0",
     "lucide-react": "^0.378.0",
     "next": "14.2.3",
     "next-auth": "^4.24.7",
     "next-themes": "^0.3.0",
-    "node-uber": "^2.0.0",
     "nodemailer": "^6.9.13",
     "react": "^18",
     "react-day-picker": "^8.10.1",

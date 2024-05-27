@@ -10,18 +10,7 @@ import { isValidCPF } from "@/src/helpers/cpf";
 import { updateUser } from "./actions/update-user";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-
-interface User {
-  id: string;
-  name: string | null;
-  email: string | null;
-  address: string | null;
-  telephone: string | null;
-  date_brith: Date | null;
-  cpf: string | null;
-  work: string | null;
-  emergency_contact: string | null;
-}
+import { User } from "@prisma/client";
 
 interface Props {
   user: User;
@@ -52,6 +41,24 @@ interface FormValues {
 }
 
 const Users = ({ user }: Props) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: yupResolver<any>(FormSchema),
+    defaultValues: {
+      name: user.name || "",
+      email: user.email || "",
+      telephone: user.telephone || "",
+      date_brith: user.date_brith || new Date(),
+      cpf: user.cpf || "",
+      address: user.address || "",
+      emergency_contact: user.emergency_contact || "",
+      work: user.work || "",
+    },
+  });
+
   const { data } = useSession();
   if (!data) {
     return redirect("/");
@@ -60,25 +67,6 @@ const Users = ({ user }: Props) => {
   if (!user?.id || (data.user && user.id !== (data?.user as any).id)) {
     return <p>User not found</p>;
   }
-
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<FormValues>({
-    resolver: yupResolver<any>(FormSchema),
-    defaultValues: {
-      name: user.name ?? undefined,
-      email: user.email ?? undefined,
-      address: user.address ?? undefined,
-      telephone: user.telephone ?? undefined,
-      date_brith: user.date_brith ?? undefined,
-      cpf: user.cpf ?? undefined,
-      work: user.work ?? undefined,
-      emergency_contact: user.emergency_contact ?? undefined,
-    },
-  });
 
   const onSubmit = async (data: FormValues) => {
      await updateUser(user.id, data);
