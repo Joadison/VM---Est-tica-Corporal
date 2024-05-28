@@ -48,7 +48,10 @@ const ServiceItem = ({ service, user }: ServiceItemProps) => {
   const handleLoginClick = () => signIn("google");
   
   useEffect(() => {
-    if (!user || !user.work || !user.cpf || !user.address || !user.emergency_contact || !user.telephone) {
+    if(!user){
+      return;
+    }
+    if (!user.work || !user.cpf || !user.address || !user.emergency_contact || !user.telephone) {
       router.push(`/user/${user?.id}`);
     }
   }, [user, router]);
