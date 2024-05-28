@@ -11,6 +11,7 @@ import BookingItem from "@/src/components/booking/booking-item";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
+  const user = session?.user ? await db.user.findUnique({ where: { id: (session.user as any).id } }) : null;
 
   const [service, confirmedBookings] = await Promise.all([
    db.service.findMany({
@@ -36,7 +37,7 @@ export default async function Home() {
         })
       : Promise.resolve([]),
   ]);
-
+   
   return (
     <div className="h-full">
       <Header/>
@@ -68,7 +69,7 @@ export default async function Home() {
         </h2>
         <div className="flex gap-2 overflow-x-auto ">
           {service.map((service) => 
-            <ServiceItem key={service.id} service={service}/>
+            <ServiceItem key={service.id} service={service} user={user}/>
           )}
         </div>
       </div>

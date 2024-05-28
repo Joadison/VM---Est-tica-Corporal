@@ -13,16 +13,13 @@ interface SaveBookingParams {
   date: Date;
 }
 
-
-//Envio de Email
 const sendBookingEmailVi = async (user: any, date: Date) => {
   const iCalContent = await createCalendarEvent(date, user.address);
-  //E-mail de Envio...
   let transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "joadison2219@gmail.com",
-      pass: "tran iexo ytel yyvd",
+      user: process.env.USER_MAIL,
+      pass: process.env.PASS_MAIL,
     },
   });
 
@@ -30,10 +27,10 @@ const sendBookingEmailVi = async (user: any, date: Date) => {
 
   //Formato no E-mail Enviado...
   let mailOptions = {
-    from: "joadison2219@gmail.com",
+    from: process.env.USER_MAIL,
     to: user?.email,
     subject: "Confirmação de Agendamento!",
-    text: `Olá!\n\nSeu agendamento foi confirmado para ${formattedDate}.\n\nAtenciosamente,\nVM - Estética Corporall`,
+    text: `Olá!\n\nSeu agendamento foi confirmado para ${formattedDate}.\n\nAtenciosamente,\nVM - Estética Corporal`,
     icalEvent: {
       contentType: 'text/calendar; charset="utf-8"; method=REQUEST',
       content: iCalContent,
@@ -43,7 +40,6 @@ const sendBookingEmailVi = async (user: any, date: Date) => {
   await transporter.sendMail(mailOptions);
 };
 
-//Create ical de agendamento
 const createCalendarEvent = (date: Date, location: string) => {
   const calendar = ical({ name: 'VM - Estética Corporal' });
   const startTime = date;
@@ -52,10 +48,10 @@ const createCalendarEvent = (date: Date, location: string) => {
     summary: 'VM - Estética Corporal',
     description: 'Massagem',
     location: location,
-    url: 'http://localhost:3000/',
+    url: process.env.URL,
     organizer: {
       name: 'VM - Estética Corporal',
-      email: 'joadison2219@gmail.com',
+      email: process.env.USER_MAIL,
     },
   };
   calendar.createEvent(createEvent);

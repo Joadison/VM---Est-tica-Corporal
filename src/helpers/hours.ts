@@ -1,3 +1,4 @@
+//Gerenciamento de DATA e HORAS pelo o ADM.
 import { setHours, setMinutes, format, addMinutes } from "date-fns";
 
 export function generateDayTimeList(date: Date): string[] {

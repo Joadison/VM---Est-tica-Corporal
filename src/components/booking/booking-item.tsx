@@ -41,10 +41,13 @@ interface BookingItemProps {
   }>;
 }
 
+
+
 const BookingItem = ({ booking }: BookingItemProps) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const descriptions = JSON.parse(booking?.service.description);
   const isBookingConfirmed = isFuture(booking.date);
+  const { service } = booking;
 
   const handleCancelClick = async () => {
     setIsDeleteLoading(true);
@@ -71,10 +74,10 @@ const BookingItem = ({ booking }: BookingItemProps) => {
               >
                 {isBookingConfirmed ? "Confirmado" : "Finalizado"}
               </Badge>
-              <h2 className="font-bold mx-1">{booking?.service.name}</h2>
+              <h2 className="font-bold mx-1">{service.name}</h2>
               <div className="flex items-center gap-2 my-2">
                 <Image
-                  src={booking?.service.imageUrl}
+                  src={service.imageUrl}
                   width={95}
                   height={22}
                   alt="VM - Estética Corporal"
@@ -104,24 +107,6 @@ const BookingItem = ({ booking }: BookingItemProps) => {
         </SheetHeader>
 
         <div className="p-0">
-          {/*<div className="relative h-[180px] w-full mt-6">
-             <Image src="/barbershop-map.png" fill alt={booking.barbershop.name} /> 
-
-            <div className="w-full absolute bottom-4 left-0 px-5">
-              <Card>
-                <CardContent className="p-3 flex gap-2">
-                  <Avatar>
-                    <AvatarImage src={booking.barbershop.imageUrl} />
-                  </Avatar> 
-                  <div>
-                        <h2 className="font-bold">{booking.barbershop.name}</h2>
-                    <h3 className="text-xs overflow-hidden text-nowrap text-ellipsis">{booking.barbershop.address}</h3> 
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-         </div> */}
-
           <div className="flex justify-center">
             <Badge
               variant={isBookingConfirmed ? "default" : "secondary"}
@@ -140,8 +125,19 @@ const BookingItem = ({ booking }: BookingItemProps) => {
           </div>
 
           <div className="text-center border-t pt-5">
-            <h1 className="font-bold">Whatsapp - 85 9 9999 9999</h1>
-            <h1 className="font-bold">Telefone - 85 9 9999 9999</h1>
+            <h1 className="font-bold">
+              <Button
+                className="p-0 m-0"
+                variant={"link"}
+                size={"icon"}
+                onClick={() =>
+                  window.open(`whatsapp://send?phone=5585981446579`, "_blank")
+                }
+              >
+                Whatsapp - 85 9 8144-6579
+              </Button>
+            </h1>
+            <h1 className="font-bold">Telefone - 85 9 8144-6579</h1>
           </div>
 
           <SheetFooter className="flex-row gap-3 mt-6 pt-5 mx-5">

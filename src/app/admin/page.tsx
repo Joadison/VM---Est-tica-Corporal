@@ -6,8 +6,18 @@ import { authOptions } from "@/src/lib/auth";
 import Admin from "@/src/components/user/admin";
 
 const AdminPage = async () => {
+
+  const allowedEmails = [
+    'joadison2219@gmail.com',
+    'anavitoriaesteticista@gmail.com',
+    'victoriamariald@gmail.com',
+    'anavitoria2005gj@gmail.com'
+  ];
+
   const session = await getServerSession(authOptions);
-  if (!session?.user || session?.user?.email !== 'joadison2219@gmail.com') {
+  const user = session?.user;
+  const email = user?.email;
+  if (!user || typeof email !== 'string' || !allowedEmails.includes(email)) {
     return redirect("/");
   }
 

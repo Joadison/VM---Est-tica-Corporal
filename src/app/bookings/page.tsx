@@ -10,7 +10,7 @@ const BookingsPage = async () => {
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
-    return redirect("/");
+    redirect("/");
   }
 
   const [service, confirmedBookings, finishedBookings] = await Promise.all([
@@ -73,15 +73,6 @@ const BookingsPage = async () => {
             </div>
           </>
         )}
-
-        <h2 className="m-2 text-sm uppercase text-gray-500 font-bold">
-          Recomendados
-        </h2>
-        <div className="flex gap-2 overflow-x-auto ">
-          {service.map((service) => 
-            <ServiceItem key={service.id} service={service}/>
-          )}
-        </div>
 
         {finishedBookings.length > 0 && (
           <>

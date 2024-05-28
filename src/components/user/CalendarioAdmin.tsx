@@ -7,12 +7,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogTrigger,
   Dialog,
   DialogClose,
 } from "../ui/dialog";
 import { useState } from "react";
-import { TbMapSearch } from "react-icons/tb";
 import { FaWhatsapp } from "react-icons/fa6";
 import { cancelBooking } from "../booking/actions/cancel-booking";
 import { toast } from "sonner";
@@ -101,19 +99,6 @@ const CalendarioADM = ({ bookings }: CalendarioProps) => {
                   <h1>CPF: {selectedBooking.user.cpf}</h1>
                   <div className="flex items-center">
                     <h1>Endereço: {selectedBooking.user.address}</h1>
-                    <Button
-                      className="p-0 m-0"
-                      variant={"link"}
-                      size={"icon"}
-                      onClick={() =>
-                        window.open(
-                          `https://m.uber.com/go/drop?${selectedBooking.user.address}`,
-                          "_blank"
-                        )
-                      }
-                    >
-                      <TbMapSearch size={"20"} />
-                    </Button>
                   </div>
                   <h1>
                     Data de Nascimento:{" "}

@@ -1,7 +1,7 @@
 "use client";
 
 import { signIn, useSession } from "next-auth/react";
-import { Booking, Service } from "@prisma/client";
+import { Booking, Service, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
@@ -23,13 +23,20 @@ import { generateDayTimeList } from "@/src/helpers/hours";
 
 import { format, setHours, setMinutes } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
-import { CalendarSearch, Loader, LogInIcon, UserCircle2 } from "lucide-react";
+import {
+  CalendarSearch,
+  Loader,
+  LogInIcon,
+  UserCircle2,
+  UserCog2Icon,
+} from "lucide-react";
 import { toast } from "sonner";
 
 interface ServiceItemProps {
   service: Service;
+  user: User | null;
 }
-const ServiceItem  = ({ service }: ServiceItemProps) => {
+const ServiceItem = ({ service, user }: ServiceItemProps) => {
   const router = useRouter();
   const { data } = useSession();
   const [date, setDate] = useState<Date | undefined>();
@@ -38,8 +45,13 @@ const ServiceItem  = ({ service }: ServiceItemProps) => {
   const [sheetIsOpen, setSheetIsOpen] = useState(false);
   const [dayBookings, setDayBookings] = useState<Booking[]>([]);
   const descriptions = JSON.parse(service.description);
-
   const handleLoginClick = () => signIn("google");
+  
+  useEffect(() => {
+    if (!user || !user.work || !user.cpf || !user.address || !user.emergency_contact || !user.telephone) {
+      router.push(`/user/${user?.id}`);
+    }
+  }, [user, router]);
 
   useEffect(() => {
     if (!date) {
@@ -110,10 +122,18 @@ const ServiceItem  = ({ service }: ServiceItemProps) => {
           onClick: () => router.push("/bookings"),
         },
       });
-    } catch (error) { } finally {
+    } catch (error) {
+    } finally {
       setIsLoading(false);
     }
   };
+
+  const missingData = [];
+  if (!user?.telephone) missingData.push("Telefone");
+  if (!user?.work) missingData.push("Profissão");
+  if (!user?.cpf) missingData.push("CPF");
+  if (!user?.address) missingData.push("Endereço");
+  if (!user?.emergency_contact) missingData.push("Contato de Emergência");
 
   return (
     <Card className="my-2 pb-0 boder border-[#d2965d] min-w-[347px] max-w-[347px] h-[auto] rounded-2xl relative">
@@ -129,9 +149,9 @@ const ServiceItem  = ({ service }: ServiceItemProps) => {
         </div>
         <div className="flex flex-col justify-between px-3">
           <h2 className="font-bold mt-3">{service.name}</h2>
-          <div className="flex-1 text-sm text-gray-400 mb-16">
+          <div className="flex-1 text-sm mb-16">
             {Object.keys(descriptions).map((key: string) => (
-              <p key={key}>
+              <p className="text-[#804c2f]" key={key}>
                 <span className="bullet">&bull;</span> {descriptions[key]}
               </p>
             ))}
@@ -145,104 +165,135 @@ const ServiceItem  = ({ service }: ServiceItemProps) => {
                 Reservar
               </Button>
             </SheetTrigger>
+
             {data?.user ? (
-              <SheetContent
-                className="bg-[#f5ede5] px-0 text-center"
-                style={{ maxHeight: "auto", overflowY: "auto" }}
-              >
-                <SheetHeader className="px-5 border-b border-solid">
-                  <SheetTitle className="text-center">Reservar</SheetTitle>
-                </SheetHeader>
+              missingData.length === 0 ? (
+                <SheetContent
+                  className="bg-[#f5ede5] px-0 text-center"
+                  style={{ maxHeight: "auto", overflowY: "auto" }}
+                >
+                  <SheetHeader className="px-5 border-b border-solid">
+                    <SheetTitle className="text-center">Reservar</SheetTitle>
+                  </SheetHeader>
 
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={handleDateClick}
-                  locale={ptBR}
-                  fromDate={new Date()}
-                  styles={{
-                    months: {
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "4rem",
-                    },
-                    head_cell: { width: "100%", textTransform: "capitalize" },
-                    cell: { width: "100%" },
-                    button: { width: "100%" },
-                    nav_button_previous: { width: "32px", height: "32px" },
-                    nav_button_next: { width: "32px", height: "32px" },
-                    caption: { textTransform: "capitalize" },
-                  }}
-                />
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={handleDateClick}
+                    locale={ptBR}
+                    fromDate={new Date()}
+                    styles={{
+                      months: {
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "4rem",
+                      },
+                      head_cell: { width: "100%", textTransform: "capitalize" },
+                      cell: { width: "100%" },
+                      button: { width: "100%" },
+                      nav_button_previous: { width: "32px", height: "32px" },
+                      nav_button_next: { width: "32px", height: "32px" },
+                      caption: { textTransform: "capitalize" },
+                    }}
+                  />
 
-                {date && (
-                  <div className="flex overflow-x-auto py-6 p-5 border-t border-solid">
-                    {timeList.map((time) => (
-                      <Button
-                        onClick={() => handleHourCkick(time)}
-                        variant={hour === time ? "default" : "outline"}
-                        key={time}
-                        className="rounded-full mx-2 hover:bg-[#d59d67] border-none"
-                      >
-                        {time}
-                      </Button>
-                    ))}
-                  </div>
-                )}
+                  {date && (
+                    <div className="flex overflow-x-auto py-6 p-5 border-t border-solid">
+                      {timeList.map((time) => (
+                        <Button
+                          onClick={() => handleHourCkick(time)}
+                          variant={hour === time ? "default" : "outline"}
+                          key={time}
+                          className="rounded-full mx-2 hover:bg-[#d59d67] border-none"
+                        >
+                          {time}
+                        </Button>
+                      ))}
+                    </div>
+                  )}
 
-                <div className="py-6 px-5 border-t border-solid border-secondary">
-                  <Card>
-                    <CardContent className="p-3 gap-3 flex flex-col">
-                      <div className="flex justify-between">
-                        <h2 className="font-bold">{service.name}</h2>
-                        <h3 className="font-bold">
-                          {Intl.NumberFormat("pt-BR", {
-                            style: "currency",
-                            currency: "BRL",
-                          }).format(Number(service.price))}
-                        </h3>
-                      </div>
-
-                      {date && (
+                  <div className="py-6 px-5 border-t border-solid border-secondary">
+                    <Card>
+                      <CardContent className="p-3 gap-3 flex flex-col">
                         <div className="flex justify-between">
-                          <h3 className="text-sm">Data</h3>
-                          <h4 className="text-sm">
-                            {format(date, "dd 'de' MMMM", {
-                              locale: ptBR,
-                            })}
-                          </h4>
+                          <h2 className="font-bold">{service.name}</h2>
+                          <h3 className="font-bold">
+                            {Intl.NumberFormat("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                            }).format(Number(service.price))}
+                          </h3>
                         </div>
-                      )}
 
-                      {hour && (
-                        <div className="flex justify-between">
-                          <h3 className="text-sm">Horário</h3>
-                          <h4 className="text-sm">{hour}</h4>
-                        </div>
-                      )}
+                        {date && (
+                          <div className="flex justify-between">
+                            <h3 className="text-sm">Data</h3>
+                            <h4 className="text-sm">
+                              {format(date, "dd 'de' MMMM", {
+                                locale: ptBR,
+                              })}
+                            </h4>
+                          </div>
+                        )}
 
-                       {/* <div className="flex justify-between">
+                        {hour && (
+                          <div className="flex justify-between">
+                            <h3 className="text-sm">Horário</h3>
+                            <h4 className="text-sm">{hour}</h4>
+                          </div>
+                        )}
+
+                        {/* <div className="flex justify-between">
                         <h3 className="text-sm">Endereço</h3>
                        <h3>{user?.addresses}</h3> 
                       </div>*/}
-                    </CardContent>
-                  </Card>
-                </div>
+                      </CardContent>
+                    </Card>
+                  </div>
 
-                <SheetFooter className="flex justify-center px-5 sm:justify-center">
+                  <SheetFooter className="flex justify-center px-5 sm:justify-center">
+                    <Button
+                      onClick={handleBookingSubmit}
+                      disabled={!hour || !date || subumitIsLoading}
+                    >
+                      {subumitIsLoading && (
+                        <Loader className="mr-2 h-4 w-4 animate-spin" />
+                      )}
+                      Confirmar Reservar
+                    </Button>
+                  </SheetFooter>
+                </SheetContent>
+              ) : (
+                <SheetContent
+                  className="bg-[#f5ede5] px-0 text-center"
+                  style={{ maxHeight: "auto", overflowY: "auto" }}
+                >
+                  <div className="flex flex-col px-5 py-6 gap-3">
+                    <h1>
+                      Para realizar a Resevar necessitamos de alguns dados
+                    </h1>
+                  </div>
+                  <div className="px-4 py-6 text-left">
+                    <p>Dados que estão em falta:</p>
+                    {missingData.map((item) => (
+                      <p className="" key={item}>
+                        <span className="bullet">&bull;</span> {item}
+                      </p>
+                    ))}
+                  </div>
+
                   <Button
-                    onClick={handleBookingSubmit}
-                    disabled={
-                      !hour || !date || subumitIsLoading
-                    } 
+                    variant={"outline"}
+                    className="justify-start border-none"
+                    onClick={() =>
+                      router.push(`/user/${(data.user as any).id}`)
+                    }
                   >
-                    {subumitIsLoading && (
-                      <Loader className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    Confirmar Reservar
+                    <UserCog2Icon size={18} className="mr-2" />
+                    Configurar Conta
                   </Button>
-                </SheetFooter>
-              </SheetContent>
+                </SheetContent>
+              )
             ) : (
               <SheetContent
                 className="bg-[#f5ede5] px-0 text-center"
