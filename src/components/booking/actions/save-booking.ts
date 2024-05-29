@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
 import { revalidatePath } from "next/cache";
 import nodemailer from "nodemailer";
-import ical from 'ical-generator';
+import ical from "ical-generator";
 
 interface SaveBookingParams {
   userId: string;
@@ -16,11 +16,13 @@ interface SaveBookingParams {
 const sendBookingEmailVi = async (user: any, date: Date) => {
   const iCalContent = await createCalendarEvent(date, user.address);
   let transporter = nodemailer.createTransport({
-    service: "gmail",
+    port: 465,
+    host: "smtp.gmail.com",
     auth: {
       user: process.env.USER_MAIL,
       pass: process.env.PASS_MAIL,
     },
+    secure: true,
   });
 
   const formattedDate = format(date, "dd/MM/yyyy HH:mm", { locale: ptBR });
@@ -34,30 +36,30 @@ const sendBookingEmailVi = async (user: any, date: Date) => {
     icalEvent: {
       contentType: 'text/calendar; charset="utf-8"; method=REQUEST',
       content: iCalContent,
-      method: 'request',
-  }
+      method: "request",
+    },
   };
   await transporter.sendMail(mailOptions);
 };
 
 const createCalendarEvent = (date: Date, location: string) => {
-  const calendar = ical({ name: 'VM - Estética Corporal' });
+  const calendar = ical({ name: "VM - Estética Corporal" });
   const startTime = date;
   const createEvent = {
     start: startTime,
-    summary: 'VM - Estética Corporal',
-    description: 'Massagem',
+    summary: "VM - Estética Corporal",
+    description: "Massagem",
     location: location,
     url: process.env.URL,
     organizer: {
-      name: 'VM - Estética Corporal',
+      name: "VM - Estética Corporal",
       email: process.env.USER_MAIL,
     },
   };
   calendar.createEvent(createEvent);
   const iCalContent = calendar.toString();
   return iCalContent;
-}
+};
 
 export const saveBooking = async (params: SaveBookingParams) => {
   await db.booking.create({
