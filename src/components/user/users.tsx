@@ -11,6 +11,16 @@ import { updateUser } from "./actions/update-user";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { User } from "@prisma/client";
+/* import Map from "@/src/helpers/maps/Map";
+import { useEffect, useState } from "react";
+import { geocodeLoc } from "@/src/helpers/maps/geocode"; */
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 interface Props {
   user: User;
@@ -19,12 +29,17 @@ interface Props {
 const FormSchema = yup.object({
   name: yup.string().required("Nome é obrigatório"),
   email: yup.string().required().email("E-mail inválido"),
-  telephone: yup.string().required(),
-  date_brith: yup.date().required(),
+  telephone: yup.string().required("Telefone é obrigatório"),
+  date_brith: yup.date().required("Data de Nascimento é obrigatório"),
+  marital_status: yup.string().required("Estado civil é obrigatório"),
   cpf: yup.string().test("isValidCPF", "CPF inválido", function (value) {
     return isValidCPF(value);
   }),
-  address: yup.string().required("Endereço é obrigatório - Preencha assim: Rua 000, casa 00 - Bairro - Cidade - Estado - CEP"),
+  address: yup
+    .string()
+    .required(
+      "Endereço é obrigatório - Preencha assim: Rua 000, casa 00 - Bairro - Cidade - Estado - CEP"
+    ),
   emergency_contact: yup.string().required(),
   work: yup.string().required(),
 });
@@ -34,6 +49,7 @@ interface FormValues {
   email: string;
   telephone: string;
   date_brith: Date;
+  marital_status: string;
   cpf: string;
   address: string;
   emergency_contact: string;
@@ -44,6 +60,8 @@ const Users = ({ user }: Props) => {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: yupResolver<any>(FormSchema),
@@ -52,12 +70,18 @@ const Users = ({ user }: Props) => {
       email: user.email || "",
       telephone: user.telephone || "",
       date_brith: user.date_brith || new Date(),
+      marital_status: user.marital_status || "",
       cpf: user.cpf || "",
       address: user.address || "",
       emergency_contact: user.emergency_contact || "",
       work: user.work || "",
     },
   });
+
+  /* const address = watch("address");
+  const [selectedPosition, setSelectedPosition] = useState<number[] | null>(
+    null
+  ); */
 
   const { data } = useSession();
   if (!data) {
@@ -69,9 +93,12 @@ const Users = ({ user }: Props) => {
   }
 
   const onSubmit = async (data: FormValues) => {
-     await updateUser(user.id, data);
+   /*  if (selectedPosition && selectedPosition.length === 2) {
+      const [lat, lon] = selectedPosition; }
+    const addressWithCoords = `${data.address}, lat=${lat}, lon=${lon}`;*/
+    await updateUser(user.id, data);
   };
-  
+
   return (
     <>
       <form
@@ -111,13 +138,17 @@ const Users = ({ user }: Props) => {
 
         <div>
           <h1>Endereço</h1>
-          <Input 
-            id="address" 
-            placeholder="Rua 000, casa 00 - Bairro - Cidade - Estado - CEP" {...register("address")} 
+          {/* <Map address={address} onSelectPosition={setSelectedPosition} /> */}
+          <Input
+            id="address"
+            placeholder="Rua 000, casa 00 - Bairro - Cidade - Estado - CEP"
+            {...register("address")}
             //autoComplete="address-line3"
           />
           {errors.address && <span>{errors.address.message}</span>}
-          <p className="text-gray-500">Preencha assim: Rua 000, casa 00 - Bairro - Cidade - Estado - CEP</p>
+          <p className="text-gray-500">
+            Preencha assim: Rua 000, casa 00 - Bairro - Cidade - Estado - CEP
+          </p>
         </div>
 
         <div>
@@ -128,7 +159,25 @@ const Users = ({ user }: Props) => {
             placeholder=""
             {...register("date_brith", { required: true })}
           />
-          {errors.date_brith  && <span>Este campo é obrigatório.</span>}
+          {errors.date_brith && <span>Este campo é obrigatório.</span>}
+        </div>
+
+        <div>
+          <h1>Estado Civil</h1>
+          <Select onValueChange={(value) => setValue("marital_status", value)}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Escolha o seu estado civil" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Solteira">Solteira</SelectItem>
+              <SelectItem value="Casada">Casada</SelectItem>
+              <SelectItem value="Separada Judicialmente">Separada Judicialmente</SelectItem>
+              <SelectItem value="Divorciada">Divorciada</SelectItem>
+              <SelectItem value="Viúva">Viúva</SelectItem>
+              <SelectItem value="União Estável">União Estável</SelectItem>
+            </SelectContent>
+          </Select>
+            {errors.marital_status && <span>Este campo é obrigatório.</span>}
         </div>
 
         <div>
@@ -138,7 +187,7 @@ const Users = ({ user }: Props) => {
             placeholder=""
             {...register("work", { required: true })}
           />
-           {errors.work && <span>Este campo é obrigatório.</span>}
+          {errors.work && <span>Este campo é obrigatório.</span>}
         </div>
 
         <div>
@@ -155,9 +204,9 @@ const Users = ({ user }: Props) => {
           <h1>Telefone de Emergência entrar em contato com:</h1>
           <Input
             id="emergency_contact"
-            {...register("emergency_contact", { required: true })} 
+            {...register("emergency_contact", { required: true })}
           />
-           {errors.emergency_contact && <span>Este campo é obrigatório.</span>}
+          {errors.emergency_contact && <span>Este campo é obrigatório.</span>}
         </div>
 
         <Button type="submit">Enviar</Button>

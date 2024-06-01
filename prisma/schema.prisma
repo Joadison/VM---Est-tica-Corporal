@@ -15,6 +15,7 @@ model User {
   telephone         String?
   date_brith        DateTime?
   image             String?
+  marital_status    String?
   cpf               String?   @unique
   work              String?
   emergency_contact String?

@@ -11,9 +11,10 @@ import {
   DialogClose,
 } from "../ui/dialog";
 import { useState } from "react";
-import { FaWhatsapp } from "react-icons/fa6";
+import { FaUber, FaWhatsapp } from "react-icons/fa6";
 import { cancelBooking } from "../booking/actions/cancel-booking";
 import { toast } from "sonner";
+import { PhoneIcon } from "lucide-react";
 
 interface CalendarioProps {
   bookings: any[];
@@ -67,6 +68,42 @@ const CalendarioADM = ({ bookings }: CalendarioProps) => {
     );
   };
 
+  const extract = (address: string) => {
+    const latMatch = address.match(/lat=(-?\d+(\.\d+)?)/);
+    const lonMatch = address.match(/lon=(-?\d+(\.\d+)?)/);
+    const lat = latMatch ? parseFloat(latMatch[1]) : undefined;
+    const lon = lonMatch ? parseFloat(lonMatch[1]) : undefined;
+    const cleanAddress = address.replace(/,?\s*lat=-?\d+(\.\d+)?/, '').replace(/,?\s*lon=-?\d+(\.\d+)?/, '').trim();
+
+    return {cleanAddress, lat, lon };
+  };
+
+  const getUberUrl = (booking: any) => {
+    if (booking && booking.user && booking.user.address) {
+      const { cleanAddress, lat, lon } = extract(booking.user.address);
+
+      if (lat !== undefined && lon !== undefined) {
+        return `uber://?action=setPickup&pickup=my_location&dropoff[latitude]=${lat}&dropoff[longitude]=${lon}&dropoff[nickname]=${cleanAddress}`;
+      }
+    }
+    return '';
+  };
+
+  const calculateAge = (birthDate: Date) => {
+    const today = new Date();
+    const birthDateObj = new Date(birthDate);
+    let age = today.getFullYear() - birthDateObj.getFullYear();
+    const monthDifference = today.getMonth() - birthDateObj.getMonth();
+  
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDateObj.getDate())) {
+      age--;
+    }
+  
+    return age;
+  };
+
+  const uberUrl = selectedBooking ? getUberUrl(selectedBooking) : '';
+
   return (
     <>
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -80,8 +117,12 @@ const CalendarioADM = ({ bookings }: CalendarioProps) => {
               <>
                 <div className="flex flex-col text-left gap-6">
                   <h1>Nome: {selectedBooking.user.name}</h1>
+                  <h1>Data de Nascimento:{" "}{format(new Date(selectedBooking.user.date_brith),"dd/MM/yyyy")} Idade: {calculateAge(new Date(selectedBooking.user.date_brith))}</h1>
+                  <h1>CPF: {selectedBooking.user.cpf}</h1>
+                  <h1>E-mail: {selectedBooking.user.email}</h1>
+                  <h1>Profissão: {selectedBooking.user.work}</h1>
                   <div className="flex items-center">
-                    <h1>Telefone: {selectedBooking.user.telephone}</h1>
+                    <h1>Whatsapp: {selectedBooking.user.telephone}</h1>
                     <Button
                       className="p-0 m-0"
                       variant={"link"}
@@ -96,18 +137,39 @@ const CalendarioADM = ({ bookings }: CalendarioProps) => {
                       <FaWhatsapp size={"20"} />
                     </Button>
                   </div>
-                  <h1>CPF: {selectedBooking.user.cpf}</h1>
                   <div className="flex items-center">
-                    <h1>Endereço: {selectedBooking.user.address}</h1>
+                    <h1>Ligação: {selectedBooking.user.telephone}</h1>
+                    <Button
+                      className="p-0 m-0"
+                      variant={"link"}
+                      size={"icon"}
+                      onClick={() =>
+                        window.open(
+                          `tel://${selectedBooking.user.telephone}`,
+                          "_blank"
+                        )
+                      }
+                    >
+                      <PhoneIcon size={"20"} />
+                    </Button>
                   </div>
-                  <h1>
-                    Data de Nascimento:{" "}
-                    {format(
-                      new Date(selectedBooking.user.date_brith),
-                      "dd/MM/yyyy"
-                    )}
-                  </h1>
-                  <h1>Profissão: {selectedBooking.user.work}</h1>
+                  <div className="flex items-center">
+                    <h1>Endereço: {extract(selectedBooking.user.address).cleanAddress}</h1>
+                    <Button
+                      className="p-0 m-0"
+                      variant={"link"}
+                      size={"icon"}
+                      onClick={() =>
+                        window.open(
+                          uberUrl,
+                          "_blank"
+                        )
+                      }
+                    >
+                      <FaUber size={"20"} />
+                    </Button>
+                  </div>
+                  <h1>Contato de Emergência ou Descrições: {selectedBooking.user.work}</h1>
                 </div>
               </>
             )}

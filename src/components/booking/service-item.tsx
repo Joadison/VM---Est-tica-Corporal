@@ -19,9 +19,9 @@ import {
   SheetTrigger,
 } from "@/src/components/ui/sheet";
 import { saveBooking } from "@/src/components/booking/actions/save-booking";
-import { generateDayTimeList } from "@/src/helpers/hours";
+import { generateDayTimeListI, generateDayTimeListII } from "@/src/helpers/hours";
 
-import { format, setHours, setMinutes } from "date-fns";
+import { format, getDay, setHours, setMinutes } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
 import {
   CalendarSearch,
@@ -81,6 +81,9 @@ const ServiceItem = ({ service, user }: ServiceItemProps) => {
     if (!date) {
       return [];
     }
+    const dayOfWeek = getDay(date);
+    const generateDayTimeList = (dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 6) ? generateDayTimeListI : generateDayTimeListII;
+
     return generateDayTimeList(date).filter((time) => {
       const timeHour = Number(time.split(":")[0]);
       const timeMinutes = Number(time.split(":")[1]);
@@ -185,6 +188,7 @@ const ServiceItem = ({ service, user }: ServiceItemProps) => {
                     onSelect={handleDateClick}
                     locale={ptBR}
                     fromDate={new Date()}
+                    disabled={{dayOfWeek: [5]}}
                     styles={{
                       months: {
                         display: "flex",

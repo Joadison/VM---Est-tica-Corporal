@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/src/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export const updateUser = async(userId: string, data: any) => {
     await db.user.update({
@@ -9,5 +9,5 @@ export const updateUser = async(userId: string, data: any) => {
         data :{...data},
     });
 
-    revalidatePath("/");
+    redirect("/");
 }
