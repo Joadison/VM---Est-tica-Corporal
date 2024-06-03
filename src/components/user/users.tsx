@@ -6,7 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useForm } from "react-hook-form";
-import { isValidCPF } from "@/src/helpers/cpf";
+import { isValidCPF } from "@/src/utils/cpf";
 import { updateUser } from "./actions/update-user";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";

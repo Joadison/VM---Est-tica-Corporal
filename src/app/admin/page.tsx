@@ -3,7 +3,8 @@ import Header from "../../components/nav/header";
 import { redirect } from "next/navigation";
 import { db } from "../../lib/prisma";
 import { authOptions } from "@/src/lib/auth";
-import Admin from "@/src/components/user/admin";
+import CalendarioADM from "@/src/components/user/CalendarioAdmin";
+import ServiceUpload from "@/src/components/user/service_up";
 
 const AdminPage = async () => {
 
@@ -35,12 +36,20 @@ const AdminPage = async () => {
       date: 'asc',
     },
   });
+
+  const service= await db.service.findMany()
  
   return (
     <div className="">
       <Header />
       <div className="px-5 py-6">
-        <Admin bookings={bookings}/>
+      <div className="pb-2">
+        <ServiceUpload service={service}/>
+      </div>
+        <div className="pb-2">
+        <CalendarioADM bookings={bookings} />
+      </div>
+      
       </div>
     </div>
   );

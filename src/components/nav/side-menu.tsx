@@ -27,6 +27,17 @@ const SideMenu = () => {
   const handleLogOutClick = () => signOut();
   const handleLoginClick = () => signIn("google");
 
+  const allowedEmails = [
+    'joadison2219@gmail.com',
+    'anavitoriaesteticista@gmail.com',
+    'victoriamariald@gmail.com',
+    'anavitoria2005gj@gmail.com'
+  ];
+
+  const isAllowedEmail = (email: string | null | undefined): email is string => {
+    return typeof email === 'string' && allowedEmails.includes(email);
+  };
+
   return (
     <>
       <SheetContent className="bg-[#f5ede5] px-0">
@@ -101,7 +112,7 @@ const SideMenu = () => {
                 <CalendarIcon size={18} className="mr-2" />
                 Agendamento
               </Button>
-              {data.user?.email === "joadison2219@gmail.com" && (
+              {isAllowedEmail(data.user?.email) && (
                    <Button
                    variant={"outline"}
                    className="justify-start border-none"

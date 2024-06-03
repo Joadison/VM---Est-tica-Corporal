@@ -4,6 +4,7 @@ import "./globals.css";
 import Footer from "@/src/components/nav/footer";
 import { Toaster } from "@/src/components/ui/sonner";
 import AuthProvider from "../providers/auth";
+import "@uploadthing/react/styles.css";
 
 const inter = Inter({ subsets: ["latin"] });
 

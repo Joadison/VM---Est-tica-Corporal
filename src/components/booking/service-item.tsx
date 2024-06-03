@@ -19,7 +19,7 @@ import {
   SheetTrigger,
 } from "@/src/components/ui/sheet";
 import { saveBooking } from "@/src/components/booking/actions/save-booking";
-import { generateDayTimeListI, generateDayTimeListII } from "@/src/helpers/hours";
+import { generateDayTimeListI, generateDayTimeListII } from "@/src/utils/hours";
 
 import { format, getDay, setHours, setMinutes } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
