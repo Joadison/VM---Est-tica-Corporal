@@ -1,3 +1,5 @@
+"use client";
+
 import { ptBR } from "date-fns/locale";
 import { Calendar } from "../ui/calendar";
 import { Button } from "../ui/button";

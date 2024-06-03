@@ -3,7 +3,7 @@ import Header from "../../components/nav/header";
 import { redirect } from "next/navigation";
 import { db } from "../../lib/prisma";
 import { authOptions } from "@/src/lib/auth";
-import Admin from "@/src/components/user/admin";
+import CalendarioADM from "@/src/components/user/CalendarioAdmin";
 
 const AdminPage = async () => {
 
@@ -40,7 +40,7 @@ const AdminPage = async () => {
     <div className="">
       <Header />
       <div className="px-5 py-6">
-        <Admin bookings={bookings}/>
+        <CalendarioADM bookings={bookings}/>
       </div>
     </div>
   );
