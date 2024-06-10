@@ -43,7 +43,7 @@ interface FormValues {
   name: string;
   type: string;
   price: number;
-  time_service: String;
+  time_service: string;
 }
 
 const ServiceUpload = ({ service }: ServiceProps) => {
@@ -104,15 +104,16 @@ const ServiceUpload = ({ service }: ServiceProps) => {
       improvementsObject[(index + 1).toString()] = value;
     });
 
-    const formData = {
+    const form = {
       ...data,
       imageUrl: idfile || "",
       description: JSON.stringify(improvementsObject),
+      time_service: data.time_service as string
     };
     if (selectedService) {
-      await updadeService(formData, selectedService.id);
+      await updadeService(form, selectedService.id);
     } else {
-      await createService(formData);
+      await createService(form);
     }
   };
 
