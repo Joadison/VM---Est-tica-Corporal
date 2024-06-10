@@ -19,9 +19,9 @@ import {
   SheetTrigger,
 } from "@/src/components/ui/sheet";
 import { saveBooking } from "@/src/components/booking/actions/save-booking";
-import { generateDayTimeListI, generateDayTimeListII } from "@/src/helpers/hours";
+import { generateDayTimeListI, generateDayTimeListII } from "@/src/utils/hours";
 
-import { format, getDay, setHours, setMinutes } from "date-fns";
+import { differenceInMinutes, format, getDay, parse, setHours, setMinutes } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
 import {
   CalendarSearch,
@@ -78,11 +78,15 @@ const ServiceItem = ({ service, user }: ServiceItemProps) => {
   };
 
   const timeList = useMemo(() => {
+    const parsedTime = parse(service.time_service, 'HH:mm:ss', new Date());
+    const serviceTime = differenceInMinutes(parsedTime, setHours(setMinutes(new Date(), 0), 0));
     if (!date) {
       return [];
     }
     const dayOfWeek = getDay(date);
-    const generateDayTimeList = (dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 6) ? generateDayTimeListI : generateDayTimeListII;
+    const generateDayTimeList = (dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 6)
+     ? (date: Date) => generateDayTimeListI(date, serviceTime) 
+     : (date: Date) => generateDayTimeListII(date, serviceTime);
 
     return generateDayTimeList(date).filter((time) => {
       const timeHour = Number(time.split(":")[0]);
@@ -98,7 +102,7 @@ const ServiceItem = ({ service, user }: ServiceItemProps) => {
       }
       return false;
     });
-  }, [date, dayBookings]);
+  }, [date, dayBookings, service.time_service]);
 
   const handleBookingSubmit = async () => {
     setIsLoading(true);

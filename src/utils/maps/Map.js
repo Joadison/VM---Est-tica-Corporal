@@ -7,7 +7,7 @@ import { createLucideIcon } from "./createLucideIcon";
 
 const customIcon = createLucideIcon(MapPin, 40);
 
-const Map = ({ address, onSelectPosition }) => {
+const Map = ({ address, onSelectPosition, setAddress }) => {
   //Local em tempo Real.
   const [initialPosition, setInitialPosition] = useState(null);
   const [selectedAddresslocal, setSelectedAddresslocal] = useState("");
@@ -18,6 +18,7 @@ const Map = ({ address, onSelectPosition }) => {
 
   //Location capturado
   useEffect(() => {
+    if(address) return;
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(function(position) {
         var latitude = position.coords.latitude;
@@ -65,6 +66,7 @@ const Map = ({ address, onSelectPosition }) => {
       if (location) {
         const { formattedAddress} = location;
         setSelectedAddress(formattedAddress);
+        setAddress(formattedAddress);
       }
     });
   };

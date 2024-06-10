@@ -1,19 +1,19 @@
 "use client";
 
 import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { useForm } from "react-hook-form";
-import { isValidCPF } from "@/src/helpers/cpf";
-import { updateUser } from "./actions/update-user";
 import { useSession } from "next-auth/react";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
 import { redirect } from "next/navigation";
 import { User } from "@prisma/client";
-/* import Map from "@/src/helpers/maps/Map";
-import { useEffect, useState } from "react";
-import { geocodeLoc } from "@/src/helpers/maps/geocode"; */
+import { useState } from "react";
+
+import { updateUser } from "./actions/update-user";
+import { isValidCPF } from "@/src/utils/cpf";
+import { format } from "date-fns";
+import Map from "@/src/utils/maps/Map";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import {
   Select,
   SelectContent,
@@ -57,6 +57,7 @@ interface FormValues {
 }
 
 const Users = ({ user }: Props) => {
+  const { data } = useSession();
   const {
     register,
     handleSubmit,
@@ -67,35 +68,32 @@ const Users = ({ user }: Props) => {
     resolver: yupResolver<any>(FormSchema),
     defaultValues: {
       name: user.name || "",
-      email: user.email || "",
       telephone: user.telephone || "",
-      date_brith: user.date_brith || new Date(),
+      email: user.email || "",
+      address: user.address ? user.address.split(", lat=")[0] : "",
+      date_brith: format(new Date(user.date_brith), 'yyyy-MM-dd') || "",
       marital_status: user.marital_status || "",
-      cpf: user.cpf || "",
-      address: user.address || "",
-      emergency_contact: user.emergency_contact || "",
       work: user.work || "",
+      cpf: user.cpf || "",
+      emergency_contact: user.emergency_contact || "",
     },
   });
-
-  /* const address = watch("address");
-  const [selectedPosition, setSelectedPosition] = useState<number[] | null>(
-    null
-  ); */
-
-  const { data } = useSession();
-  if (!data) {
+  const address = watch("address");
+  const [selectedPosition, setSelectedPosition] = useState<number[] | null>(null);
+  const allowedEmails = [
+    'joadison2219@gmail.com',
+    'anavitoriaesteticista@gmail.com',
+    'victoriamariald@gmail.com',
+    'anavitoria2005gj@gmail.com'
+  ];
+  const userEmail = data?.user?.email;
+  const isAdmin = userEmail && allowedEmails.includes(userEmail);
+  if (user.email !== userEmail && isAdmin === false) {
+    console.log("Não é o usuário ou administrador correto.")
     return redirect("/");
   }
-
-  if (!user?.id || (data.user && user.id !== (data?.user as any).id)) {
-    return <p>User not found</p>;
-  }
-
+  
   const onSubmit = async (data: FormValues) => {
-   /*  if (selectedPosition && selectedPosition.length === 2) {
-      const [lat, lon] = selectedPosition; }
-    const addressWithCoords = `${data.address}, lat=${lat}, lon=${lon}`;*/
     await updateUser(user.id, data);
   };
 
@@ -138,7 +136,7 @@ const Users = ({ user }: Props) => {
 
         <div>
           <h1>Endereço</h1>
-          {/* <Map address={address} onSelectPosition={setSelectedPosition} /> */}
+          <Map address={address} onSelectPosition={setSelectedPosition} setAddress={(addr) => setValue("address", addr)}/>
           <Input
             id="address"
             placeholder="Rua 000, casa 00 - Bairro - Cidade - Estado - CEP"
@@ -157,14 +155,14 @@ const Users = ({ user }: Props) => {
             id="date_brith "
             type="date"
             placeholder=""
-            {...register("date_brith", { required: true })}
+            {...register("date_brith")}
           />
           {errors.date_brith && <span>Este campo é obrigatório.</span>}
         </div>
 
         <div>
           <h1>Estado Civil</h1>
-          <Select onValueChange={(value) => setValue("marital_status", value)}>
+          <Select onValueChange={(value) => setValue("marital_status", value)} defaultValue={user.marital_status || ""}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Escolha o seu estado civil" />
             </SelectTrigger>

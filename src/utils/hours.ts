@@ -3,7 +3,7 @@
 //Sáb 8 as 11 - 16 as 19
 import { setHours, setMinutes, format, addMinutes } from "date-fns";
 
-export function generateDayTimeListI(date: Date): string[] {
+export function generateDayTimeListI(date: Date, serviceTime: number): string[] {
   const startTimeI = setMinutes(setHours(date, 8), 0); // Set start time to 08:00
   const endTimeI = setMinutes(setHours(date, 11), 0); // Set end time to 11:00
 
@@ -11,7 +11,7 @@ export function generateDayTimeListI(date: Date): string[] {
   const startTimeII = setMinutes(setHours(date, 16), 0); // Set start time to 08:00
   const endTimeII = setMinutes(setHours(date, 19), 0); // Set end time to 11:00
 
-  const interval = 90; // interval in minutes 1:30min
+  const interval = serviceTime + 90; // interval in minutes 1:30min
 
   const timeList: string[] = [];
 
@@ -33,10 +33,10 @@ export function generateDayTimeListI(date: Date): string[] {
 //Qui 9 as 11
 //Ter 9 as 11
 //Dom 9 as 11 
-export function generateDayTimeListII(date: Date): string[] {
+export function generateDayTimeListII(date: Date, serviceTime: number): string[] {
   const startTime = setMinutes(setHours(date, 9), 0); // Set start time to 09:00
   const endTime = setMinutes(setHours(date, 11), 0); // Set end time to 11:00
-  const interval = 90; // Interval in minutes 1:30min
+  const interval = serviceTime + 90; // Interval in minutes 1:30min
   
   const timeList: string[] = [];
 
