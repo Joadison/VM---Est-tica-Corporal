@@ -9,7 +9,7 @@ export const createLucideIcon = (IconComponent = MapPin, iconSize = 40) => {
   return new L.Icon({
     iconUrl,
     iconSize: [iconSize, iconSize],
-    iconAnchor: [iconSize / 2, iconSize], // Ajuste para alinhar o ícone corretamente
-    popupAnchor: [0, -iconSize / 2], // Ajuste para alinhar o popup corretamente
+    iconAnchor: [iconSize / 2, iconSize],
+    popupAnchor: [0, -iconSize / 2], 
   });
 };

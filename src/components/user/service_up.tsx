@@ -2,9 +2,9 @@
 
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import {
@@ -22,9 +22,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UploadButton } from "@/src/utils/uploadthing";
 import { Service } from "@prisma/client";
+import { createService } from "./actions/create-service";
+import { updadeService } from "./actions/update-service";
 
 interface ServiceProps {
   service: Service[];
@@ -48,6 +50,8 @@ const ServiceUpload = ({ service }: ServiceProps) => {
   const {
     register,
     handleSubmit,
+    setValue,
+    control,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: yupResolver<any>(FormSchema),
@@ -55,6 +59,7 @@ const ServiceUpload = ({ service }: ServiceProps) => {
   const [idfile, setIdfile] = useState<string | undefined>();
   const [improvements, setImprovements] = useState<string[]>([]);
   const [newImprovement, setNewImprovement] = useState<string>("");
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
 
   const addImprovement = () => {
     setImprovements([...improvements, newImprovement]);
@@ -67,6 +72,32 @@ const ServiceUpload = ({ service }: ServiceProps) => {
     setImprovements(updatedImprovements);
   };
 
+  const handleServiceSelect = (serviceName: string) => {
+    const selectedService = service.find((serv) => serv.name === serviceName);
+    setSelectedService(selectedService || null);
+  };
+
+  useEffect(() => {
+    if (selectedService) {
+      setValue("name", selectedService.name);
+      setValue("type", selectedService.type);
+      setValue("price", Number(selectedService.price.toString()));
+      setValue("time_service", selectedService.time_service);
+      try {
+        const parsedDescription = selectedService.description
+          ? JSON.parse(selectedService.description)
+          : {};
+        const improvementsArray: string[] = Object.values(
+          parsedDescription
+        ).map((value: any) => String(value));
+        setImprovements(improvementsArray);
+      } catch (error) {
+        console.error("Error parsing description:", error);
+        setImprovements([]);
+      }
+    }
+  }, [selectedService, setValue]);
+
   const onSubmit = async (data: FormValues) => {
     const improvementsObject: { [key: string]: string } = {};
     improvements.forEach((value, index) => {
@@ -75,21 +106,25 @@ const ServiceUpload = ({ service }: ServiceProps) => {
 
     const formData = {
       ...data,
-      idfile: idfile,
-      improvements: JSON.stringify(improvementsObject),
+      imageUrl: idfile || "",
+      description: JSON.stringify(improvementsObject),
     };
-    console.log(formData);
+    if (selectedService) {
+      await updadeService(formData, selectedService.id);
+    } else {
+      await createService(formData);
+    }
   };
 
   return (
-    <div>
+    <div className="h-auto">
       <Dialog>
         <DialogTrigger asChild>
           <Button variant="outline">
             Adicionar Serviços ou Configuração de Serviço
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="w-[80vh] h-[80vh] sm:max-w-[425px] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               Adicionar Serviços ou Configuração de Serviço
@@ -97,18 +132,30 @@ const ServiceUpload = ({ service }: ServiceProps) => {
             {/* <DialogDescription>Adicionar Serviços</DialogDescription> */}
           </DialogHeader>
           <h1 className="font-bold">Selecione o Serviço que deseja Alterar</h1>
-          <Select>
-            <SelectTrigger className="w-[180px] mb-4">
-              <SelectValue placeholder="Escolha o serviço" />
-            </SelectTrigger>
-            <SelectContent>
-              {service.map((serv) => (
-                <SelectItem key={serv.id} value={serv.name}>
-                  {serv.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex justify-between items-center gap-2 mb-4">
+            <Select onValueChange={handleServiceSelect}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Escolha o serviço" />
+              </SelectTrigger>
+              <SelectContent>
+                {service.map((serv) => (
+                  <SelectItem key={serv.id} value={serv.name}>
+                    {serv.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {selectedService && (
+              <Button
+                size={"icon"}
+                type="button"
+                className="p-2 text-white"
+                onClick={() => setSelectedService(null)}
+              >
+                <X />
+              </Button>
+            )}
+          </div>
           <form
             autoComplete="off"
             onSubmit={handleSubmit(onSubmit)}
