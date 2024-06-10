@@ -71,7 +71,7 @@ const Users = ({ user }: Props) => {
       telephone: user.telephone || "",
       email: user.email || "",
       address: user.address ? user.address.split(", lat=")[0] : "",
-      date_brith: format(new Date(user.date_brith), 'yyyy-MM-dd') || "",
+      date_brith: user.date_brith ? new Date(user.date_brith) : undefined,
       marital_status: user.marital_status || "",
       work: user.work || "",
       cpf: user.cpf || "",
@@ -152,10 +152,11 @@ const Users = ({ user }: Props) => {
         <div>
           <h1>Data de Nascimento</h1>
           <Input
-            id="date_brith "
+            id="date_brith"
             type="date"
             placeholder=""
             {...register("date_brith")}
+            value={watch("date_brith") ? format(new Date(watch("date_brith")), 'yyyy-MM-dd') : ""}
           />
           {errors.date_brith && <span>Este campo é obrigatório.</span>}
         </div>
@@ -163,7 +164,7 @@ const Users = ({ user }: Props) => {
         <div>
           <h1>Estado Civil</h1>
           <Select onValueChange={(value) => setValue("marital_status", value)} defaultValue={user.marital_status || ""}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[full]">
               <SelectValue placeholder="Escolha o seu estado civil" />
             </SelectTrigger>
             <SelectContent>
