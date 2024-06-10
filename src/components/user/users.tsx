@@ -78,6 +78,7 @@ const Users = ({ user }: Props) => {
       emergency_contact: user.emergency_contact || "",
     },
   });
+
   const address = watch("address");
   const [selectedPosition, setSelectedPosition] = useState<number[] | null>(null);
   const allowedEmails = [
@@ -136,7 +137,7 @@ const Users = ({ user }: Props) => {
 
         <div>
           <h1>Endereço</h1>
-          <Map address={address} onSelectPosition={setSelectedPosition} setAddress={(addr) => setValue("address", addr)}/>
+          <Map address={address} onSelectPosition={setSelectedPosition} setAddress={(addr: string) => setValue("address", addr)}/>
           <Input
             id="address"
             placeholder="Rua 000, casa 00 - Bairro - Cidade - Estado - CEP"
