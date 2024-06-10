@@ -7,18 +7,17 @@ import CalendarioADM from "@/src/components/user/CalendarioAdmin";
 import ServiceUpload from "@/src/components/user/service_up";
 
 const AdminPage = async () => {
-
   const allowedEmails = [
-    'joadison2219@gmail.com',
-    'anavitoriaesteticista@gmail.com',
-    'victoriamariald@gmail.com',
-    'anavitoria2005gj@gmail.com'
+    "joadison2219@gmail.com",
+    "anavitoriaesteticista@gmail.com",
+    "victoriamariald@gmail.com",
+    "anavitoria2005gj@gmail.com",
   ];
 
   const session = await getServerSession(authOptions);
   const user = session?.user;
   const email = user?.email;
-  if (!user || typeof email !== 'string' || !allowedEmails.includes(email)) {
+  if (!user || typeof email !== "string" || !allowedEmails.includes(email)) {
     return redirect("/");
   }
 
@@ -33,23 +32,22 @@ const AdminPage = async () => {
       user: true,
     },
     orderBy: {
-      date: 'asc',
+      date: "asc",
     },
   });
 
-  const service= await db.service.findMany()
- 
+  const service = await db.service.findMany();
+
   return (
     <div className="">
       <Header />
       <div className="px-5 py-6">
-        <CalendarioADM bookings={bookings}/>
-      <div className="pb-2">
-        <ServiceUpload service={service}/>
-      </div>
         <div className="pb-2">
-        <CalendarioADM bookings={bookings} />
-      </div>
+          <ServiceUpload service={service} />
+        </div>
+        <div className="pb-2">
+          <CalendarioADM bookings={bookings} />
+        </div>
       </div>
     </div>
   );
