@@ -78,13 +78,13 @@ const ServiceItem = ({ service, user }: ServiceItemProps) => {
   };
 
   const timeList = useMemo(() => {
-    const parsedTime = parse(service.time_service, 'HH:mm:ss', new Date());
+    const parsedTime = parse(service.time_service, 'HH:mm', new Date());
     const serviceTime = differenceInMinutes(parsedTime, setHours(setMinutes(new Date(), 0), 0));
     if (!date) {
       return [];
     }
     const dayOfWeek = getDay(date);
-    const generateDayTimeList = (dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 6)
+    const generateDayTimeList = (dayOfWeek === 6)
      ? (date: Date) => generateDayTimeListI(date, serviceTime) 
      : (date: Date) => generateDayTimeListII(date, serviceTime);
 
@@ -192,7 +192,7 @@ const ServiceItem = ({ service, user }: ServiceItemProps) => {
                     onSelect={handleDateClick}
                     locale={ptBR}
                     fromDate={new Date()}
-                    disabled={{dayOfWeek: [5]}}
+                    disabled={{dayOfWeek: [2, 4]}}
                     styles={{
                       months: {
                         display: "flex",
@@ -233,6 +233,13 @@ const ServiceItem = ({ service, user }: ServiceItemProps) => {
                               style: "currency",
                               currency: "BRL",
                             }).format(Number(service.price))}
+                          </h3>
+                        </div>
+
+                        <div className="flex justify-between">
+                          <h2 className="font-bold">Tempo de Serviço</h2>
+                          <h3 className="font-bold">
+                            {service.time_service}
                           </h3>
                         </div>
 

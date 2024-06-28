@@ -39,7 +39,7 @@ const AdminPage = async () => {
   const service = await db.service.findMany();
 
   return (
-    <div className="">
+    <div>
       <Header />
       <div className="px-5 py-6">
         <div className="pb-2">

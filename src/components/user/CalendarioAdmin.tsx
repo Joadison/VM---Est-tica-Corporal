@@ -50,12 +50,12 @@ const CalendarioADM = ({ bookings }: CalendarioProps) => {
           {date.getDate()}
         </div>
         {dayBookings.length > 0 && (
-          <div className="absolute top-10 left-0 flex flex-col max-h-[8rem] overflow-y-auto">
+          <div className="absolute top-10 left-0 flex flex-col  max-h-[8rem] overflow-y-auto">
             {dayBookings.map((booking, index) => (
               <Button
-                variant={"link"}
+                variant={"outline"}
                 key={index}
-                className="my-1 mx-1 p-0 text-black bg-transparent hover:none"
+                className="my-0 mx-2 p-0 text-black bg-transparent justify-start hover:none border-none font-semibold text-[12px]"
                 onClick={() => handleDayClick(booking)}
               >
                 <p className="">
