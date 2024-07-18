@@ -4,10 +4,7 @@ import * as yup from "yup";
 import { useSession } from "next-auth/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import { redirect } from "next/navigation";
 import { User } from "@prisma/client";
-import { useState } from "react";
-
 import { updateUser } from "./actions/update-user";
 import { isValidCPF } from "@/src/utils/cpf";
 import { format } from "date-fns";
@@ -193,21 +190,7 @@ const Users = ({ user }: Props) => {
   //const address = watch("address");
   //const [selectedPosition, setSelectedPosition] = useState<number[] | null>(null);
 
-  const allowedEmails = [
-    "joadison2219@gmail.com",
-    "anavitoriaesteticista@gmail.com",
-    "victoriamariald@gmail.com",
-    "anavitoria2005gj@gmail.com",
-  ];
-  const userEmail = data?.user?.email;
-  const isAdmin = userEmail && allowedEmails.includes(userEmail);
-  if (user.email !== userEmail && isAdmin === false) {
-    console.log("Não é o usuário ou administrador correto.");
-    return redirect("/");
-  }
-
   const onSubmit = async (data: FormValues) => {
-    console.log(data);
     await updateUser(user.id, data);
   };
 
