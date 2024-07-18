@@ -38,7 +38,6 @@ const FormSchema = yup.object({
     ),
   emergency_contact: yup.string().required(),
   work: yup.string().required(),
-
   is_pregnant: yup.boolean(),
   has_children: yup.string(),
   long_sitting: yup.boolean(),
@@ -125,7 +124,6 @@ const Users = ({ user }: Props) => {
       work: user.work || "",
       cpf: user.cpf || "",
       emergency_contact: user.emergency_contact || "",
-
       is_pregnant: user.is_pregnant || false,
       has_children: user.has_children || "",
       long_sitting: user.long_sitting || false,
@@ -155,37 +153,6 @@ const Users = ({ user }: Props) => {
     },
   });
 
-  const booleanQuestions = [
-    { key: 'is_pregnant', label: 'É gestante?' },
-    { key: 'long_sitting', label: 'Costuma ficar muito tempo sentada?' },
-    { key: 'previous_cosmetic', label: 'Realizou tratamento estético anterior?' },
-    { key: 'regular_bowel_function', label: 'Funcionamento do intestino regular?' },
-    { key: 'is_smoker', label: 'É fumante?' },
-    { key: 'alcohol_consumption', label: 'Ingere bebida alcoólica?' },
-    { key: 'balanced_diet', label: 'Alimentação balanceada?' },
-    { key: 'water_consumption', label: 'Ingere água com frequência?' },
-    { key: 'pacemaker_present', label: 'Portador de marca-passo?' },
-    { key: "varicose_veins", label: "Varizes?" },
-    { key: "lesions_present", label: "Lesões?" },
-    { key: "hypertension", label: "Hipertensão?" },
-    { key: "hypotension", label: "Hipotensão?" },
-    { key: "epilepsy", label: "Epilepsia?" }
-  ];
-
-  const textQuestions  = [
-    {key: "has_children",label: "Tem filhos?", option: "Quantos filhos?"},
-    {key: "surgical_history",label: "Possui antecedentes cirúrgicos?", option: "Qual tipo de cirurgia?"},
-    {key: "allergic_history",label: "Antecedentes alérgicos?",option: "Diga ao que seria?"},
-    {key: "exercise_duration",label: "Prática atividade física?",option: "Tempo praticando atividade física?"},
-    {key: "orthopedic_issues",label: "Tem algum problema ortopédico?",option: "Qual é o problema ortopédico?"},
-    {key: "medical_treatment",label: "Faz algum tratamento médico?",option: "Qual é o tratamento médico?"},
-    {key: "skin_acids_usage",label: "Usou ou usa ácidos na pele?",option: "Para qual é o tratamento?"},
-    {key: "metal_presence", label: "Presença de metais?", option: "Onde?" },
-    {key: "oncologic_history",label: "Antecedentes oncológicos?",option: "Qual tipo?"},
-    {key: "menstrual_cycle",label: "Você tem ciclo menstrual ?",option:"Como é seu ciclo menstrual ? (Duração do período e intensidade das cólicas)."},
-    {key: "contraceptive_method",label: "Usa método anticonceptivo?",option: "Usa método anticonceptivo?"},
-    { key: "diabetes_type", label: "Diabetes?", option: "Qual tipo?" }
-  ];
 
   //const address = watch("address");
   //const [selectedPosition, setSelectedPosition] = useState<number[] | null>(null);
@@ -201,6 +168,8 @@ const Users = ({ user }: Props) => {
         onSubmit={handleSubmit(onSubmit)}
         className="mx-auto p-6 rounded-lg "
       >
+      {/* DADOS de CONTATOS */}
+      <div>
         <div className="my-4">
           <h1 className="block font-bold mb-2">Nome</h1>
           <Input
@@ -210,7 +179,30 @@ const Users = ({ user }: Props) => {
           />
           {errors.name && <span>Este campo é obrigatório.</span>}
         </div>
-
+        <div className="my-4">
+          <h1 className="block font-bold mb-2">Data de Nascimento</h1>
+          <Input
+            id="date_brith"
+            type="date"
+            placeholder=""
+            {...register("date_brith")}
+            value={
+              watch("date_brith")
+                ? format(new Date(watch("date_brith")), "yyyy-MM-dd")
+                : ""
+            }
+          />
+          {errors.date_brith && <span>Este campo é obrigatório.</span>}
+        </div>
+        <div className="my-4">
+          <h1 className="block font-bold mb-2">CPF</h1>
+          <Input
+            id="cpf"
+            placeholder="999.9999.999-99"
+            {...register("cpf", { required: true })}
+          />
+          {errors.cpf && <span>Este campo é obrigatório.</span>}
+        </div>
         <div className="my-4">
           <h1 className="block font-bold mb-2">Whatsapp</h1>
           <Input
@@ -220,7 +212,6 @@ const Users = ({ user }: Props) => {
           />
           {errors.telephone && <span>Este campo é obrigatório.</span>}
         </div>
-
         <div className="my-4">
           <h1 className="block font-bold mb-2">Email</h1>
           <Input
@@ -230,7 +221,6 @@ const Users = ({ user }: Props) => {
           />
           {errors.email && <span>Este campo é obrigatório.</span>}
         </div>
-
         <div className="my-4">
           <h1 className="block font-bold mb-2">Endereço</h1>
           {/* <Map
@@ -249,23 +239,9 @@ const Users = ({ user }: Props) => {
             Preencha assim: Rua 000, casa 00 - Bairro - Cidade - Estado - CEP
           </p>
         </div>
-
-        <div className="my-4">
-          <h1 className="block font-bold mb-2">Data de Nascimento</h1>
-          <Input
-            id="date_brith"
-            type="date"
-            placeholder=""
-            {...register("date_brith")}
-            value={
-              watch("date_brith")
-                ? format(new Date(watch("date_brith")), "yyyy-MM-dd")
-                : ""
-            }
-          />
-          {errors.date_brith && <span>Este campo é obrigatório.</span>}
-        </div>
-
+      </div>
+      {/* DADOS Acrecimo */}
+      <div>
         <div className="my-4">
           <h1 className="block font-bold mb-2">Estado Civil</h1>
           <Select
@@ -288,7 +264,6 @@ const Users = ({ user }: Props) => {
           </Select>
           {errors.marital_status && <span>Este campo é obrigatório.</span>}
         </div>
-
         <div className="my-4">
           <h1 className="block font-bold mb-2">Profissão</h1>
           <Input
@@ -298,17 +273,25 @@ const Users = ({ user }: Props) => {
           />
           {errors.work && <span>Este campo é obrigatório.</span>}
         </div>
-
-        <div className="my-4">
-          <h1 className="block font-bold mb-2">CPF</h1>
+        <div className="flex items-center my-4">
           <Input
-            id="cpf"
-            placeholder="999.9999.999-99"
-            {...register("cpf", { required: true })}
+            id="long_sitting"
+            type="checkbox"
+            placeholder=""
+            {...register("long_sitting", { required: true })}
+            className="form-checkbox h-5 w-5 text-blue-600"
           />
-          {errors.cpf && <span>Este campo é obrigatório.</span>}
+           <span className="ml-2 block font-bold">Costuma ficar muito tempo sentada?</span>
         </div>
-
+        <div className="my-4">
+          <span className="block font-bold mb-2">A quanto tempo prática atividade física?</span>
+          <Input
+            id="exercise_duration"
+            type="text"
+            placeholder="3 meses - 6 meses ou 1 ano - 3 anos ou 4 anos - a mais ou Semanas."
+            {...register("exercise_duration", { required: true })}
+          />
+        </div>
         <div className="my-4">
           <h1 className="block font-bold mb-2">Telefone de Emergência entrar em contato com:</h1>
           <Input
@@ -317,40 +300,232 @@ const Users = ({ user }: Props) => {
           />
           {errors.emergency_contact && <span>Este campo é obrigatório.</span>}
         </div>
-
-        {textQuestions.map(({ key, label }) => {
-          if (!(key in register)) {
-            throw new Error(`Chave inválida no formulário: ${key}`);
-          }
-          return (
-            <div key={key} className="my-4">
-              <h1 className="block font-bold mb-2">{label}</h1>
-              <Input id={key} {...register(key as keyof FormValues)} className="rounded-md p-2 w-full" />
-              {errors[key as keyof FormValues] && <span>Este campo é obrigatório.</span>}
-            </div>
-          );
-        })}
-
-      {booleanQuestions.map(({ key, label }) => {
-         if (!(key in register)) {
-          throw new Error(`Chave inválida no formulário: ${key}`);
-        }
-        const isChecked = watch(key as keyof FormValues) as boolean;
-        return (
-          <div key={key} className="my-4">
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                {...register(key as keyof FormValues)}
-                checked={isChecked}
-                onChange={(e) => setValue(key as keyof FormValues, e.target.checked)}
-                className="form-checkbox h-5 w-5 text-blue-600"
-              />
-              <span className="ml-2 block font-bold">{label}</span>
-            </label>
-          </div>
-        );
-      })}
+      </div>
+      {/* Vida Sexual */}
+      <div className="">
+        <div className="flex items-center my-4">
+          <span className="mr-4 block font-bold">É gestante?</span>
+          <Input
+            id="is_pregnant"
+            type="checkbox"
+            placeholder=""
+            {...register("is_pregnant", { required: true })}
+            className="form-checkbox h-5 w-5 text-blue-600"
+          />
+        </div>
+        <div className="my-4">
+          <span className="block font-bold mb-2">Tem filhos?</span>
+          <Input
+            id="has_children"
+            type="text"
+            placeholder="Se sim, quantos filhos?"
+            {...register("has_children", { required: true })}
+          />
+        </div>
+        <div className="my-4">
+          <span className="block font-bold mb-2">Faz algum tratamento médico?</span>
+          <Input
+            id="medical_treatment"
+            type="text"
+            placeholder="Se sim, qual tratamento?"
+            {...register("medical_treatment", { required: true })}
+          />
+        </div>
+        <div className="my-4">
+          <span className="block font-bold mb-2">Usa método anticonceptivo?</span>
+          <Input
+            id="contraceptive_method"
+            type="text"
+            placeholder="Se sim, qual anticonceptivo?"
+            {...register("contraceptive_method", { required: true })}
+          />
+        </div>
+        <div className="my-4">  
+        <span className="block font-bold mb-2">Como é seu ciclo menstrual ? (Duração do período e intensidade das cólicas).</span>
+          <Input
+            id="menstrual_cycle"
+            placeholder=""
+            {...register("menstrual_cycle", { required: true })}
+          />
+        </div>
+      </div>
+      {/* Vicios */}
+      <div className="">
+        <div className="flex items-center my-4">
+          <span className="mr-4 block font-bold">Realizou tratamento estético anterior?</span>
+          <Input
+            id="previous_cosmetic"
+            type="checkbox"
+            {...register("previous_cosmetic", { required: true })}
+            className="form-checkbox h-5 w-5 text-blue-600"
+          />
+        </div>
+        <div className="flex items-center my-4">
+          <span className="mr-4 block font-bold">Ingere água com frequência?</span>
+          <Input
+            id="water_consumption"
+            type="checkbox"
+            {...register("water_consumption", { required: true })}
+            className="form-checkbox h-5 w-5 text-blue-600"
+          />
+        </div>
+        <div className="flex items-center my-4">
+          <span className="mr-4 block font-bold">Alimentação balanceada?</span>
+          <Input
+            id="balanced_diet"
+            type="checkbox"
+            {...register("balanced_diet", { required: true })}
+            className="form-checkbox h-5 w-5 text-blue-600"
+          />
+        </div>
+        <div className="flex items-center my-4">
+          <span className="mr-4 block font-bold">Ingere bebida alcoólica?</span>
+          <Input
+            id="alcohol_consumption"
+            type="checkbox"
+            {...register("alcohol_consumption", { required: true })}
+            className="form-checkbox h-5 w-5 text-blue-600"
+          />
+        </div>
+        <div className="flex items-center my-4">
+          <span className="mr-4 block font-bold">É fumante?</span>
+          <Input
+            id="is_smoker"
+            type="checkbox"
+            {...register("is_smoker", { required: true })}
+            className="form-checkbox h-5 w-5 text-blue-600"
+          />
+        </div>
+        <div className="flex items-center my-4">
+          <span className="mr-4 block font-bold">Funcionamento do intestino regular?</span>
+          <Input
+            id="regular_bowel_function"
+            type="checkbox"
+            {...register("regular_bowel_function", { required: true })}
+            className="form-checkbox h-5 w-5 text-blue-600"
+          />
+        </div>
+      </div>
+      {/* Doenças */}
+      <div>
+        <div className="my-4">
+          <span className="block font-bold mb-2">Presença de metais?</span>
+          <Input
+            id="metal_presence"
+            type="text"
+            placeholder="Se sim, Onde?"
+            {...register("metal_presence", { required: true })}
+          />
+        </div>
+        <div className="my-4">
+          <span className="block font-bold mb-2">Possui antecedentes cirúrgicos?</span>
+          <Input
+            id="surgical_history"
+            type="text"
+            placeholder="Se sim, qual tipo de cirurgia?"
+            {...register("surgical_history", { required: true })}
+          />
+        </div>
+        <div className="my-4">
+          <span className="block font-bold mb-2">Antecedentes alérgicos?</span>
+          <Input
+            id="allergic_history"
+            type="text"
+            placeholder="Diga ao que seria?"
+            {...register("allergic_history", { required: true })}
+          />
+        </div>
+        <div className="my-4">  
+        <span className="block font-bold mb-2">Tem Diabetes?</span>
+          <Input
+            id="diabetes_type"
+            type="text"
+            placeholder="Se sim, qual tipo?"
+            {...register("diabetes_type", { required: true })}
+          />
+        </div>
+        <div className="my-4">  
+        <span className="block font-bold mb-2">Tem algum problema ortopédico?</span>
+          <Input
+            id="orthopedic_issues"
+            type="text"
+            placeholder="Se sim, qual é o problema ortopédico??"
+            {...register("orthopedic_issues", { required: true })}
+          />
+        </div>
+        <div className="my-4">  
+        <span className="block font-bold mb-2">Usou ou usa ácidos na pele?</span>
+          <Input
+            id="skin_acids_usage"
+            type="text"
+            placeholder="Se sim, qual é o tratamento?"
+            {...register("skin_acids_usage", { required: true })}
+          />
+        </div>
+        <div className="my-4">  
+        <span className="block font-bold mb-2">Antecedentes oncológicos?</span>
+          <Input
+            id="oncologic_history"
+            type="text"
+            placeholder="Se sim, qual é o tipo?"
+            {...register("oncologic_history", { required: true })}
+          />
+        </div>
+        <div className="flex items-center my-4">
+          <span className="mr-4 block font-bold">Portador de marca-passo?</span>
+          <Input
+            id="pacemaker_present"
+            type="checkbox"
+            {...register("pacemaker_present", { required: true })}
+            className="form-checkbox h-5 w-5 text-blue-600"
+          />
+        </div>
+        <div className="flex items-center my-4">
+          <span className="mr-4 block font-bold">Varizes?</span>
+          <Input
+            id="varicose_veins"
+            type="checkbox"
+            {...register("varicose_veins", { required: true })}
+            className="form-checkbox h-5 w-5 text-blue-600"
+          />
+        </div>
+        <div className="flex items-center my-4">
+          <span className="mr-4 block font-bold">Lesões?</span>
+          <Input
+            id="lesions_present"
+            type="checkbox"
+            {...register("lesions_present", { required: true })}
+            className="form-checkbox h-5 w-5 text-blue-600"
+          />
+        </div>
+        <div className="flex items-center my-4">
+          <span className="mr-4 block font-bold">Hipertensão?</span>
+          <Input
+            id="hypertension"
+            type="checkbox"
+            {...register("hypertension", { required: true })}
+            className="form-checkbox h-5 w-5 text-blue-600"
+          />
+        </div>
+        <div className="flex items-center my-4">
+          <span className="mr-4 block font-bold">Hipotensão?</span>
+          <Input
+            id="hypotension"
+            type="checkbox"
+            {...register("hypotension", { required: true })}
+            className="form-checkbox h-5 w-5 text-blue-600"
+          />
+        </div>
+        <div className="flex items-center my-4">
+          <span className="mr-4 block font-bold">Epilepsia?</span>
+          <Input
+            id="epilepsy"
+            type="checkbox"
+            {...register("epilepsy", { required: true })}
+            className="form-checkbox h-5 w-5 text-blue-600"
+          />
+        </div>
+      </div>
 
 
         <Button type="submit">Enviar</Button>
