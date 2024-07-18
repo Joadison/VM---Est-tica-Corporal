@@ -12,7 +12,7 @@ interface Props {
 }
 
 const UserPage = async ({ params }: Props) => {
-  const allowedEmails = [
+  /* const allowedEmails = [
     "joadison2219@gmail.com",
     "anavitoriaesteticista@gmail.com",
     "victoriamariald@gmail.com",
@@ -23,7 +23,7 @@ const UserPage = async ({ params }: Props) => {
   const email = user?.email;
   if (!user || typeof email !== "string" || !allowedEmails.includes(email)) {
     return redirect("/");
-  }
+  } */
 
   const { id } = params;
   const useracss = await db.user.findUnique({ where: { id } });
