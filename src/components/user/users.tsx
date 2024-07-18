@@ -335,28 +335,39 @@ const Users = ({ user }: Props) => {
           {errors.emergency_contact && <span>Este campo é obrigatório.</span>}
         </div>
 
-        {textQuestions.map(({ key, label }) => (
-        <div key={key} className="my-4">
-          <h1 className="block font-bold mb-2">{label}</h1>
-          <Input id={key} {...register(key)} className="rounded-md p-2 w-full" />
-          {errors[key as keyof FormValues] && <span>Este campo é obrigatório.</span>}
-        </div>
-      ))}
+        {textQuestions.map(({ key, label }) => {
+          if (!(key in register)) {
+            throw new Error(`Chave inválida no formulário: ${key}`);
+          }
+          return (
+            <div key={key} className="my-4">
+              <h1 className="block font-bold mb-2">{label}</h1>
+              <Input id={key} {...register(key as keyof FormValues)} className="rounded-md p-2 w-full" />
+              {errors[key as keyof FormValues] && <span>Este campo é obrigatório.</span>}
+            </div>
+          );
+        })}
 
-      {booleanQuestions.map(({ key, label }) => (
-        <div key={key}  className="my-4">
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              {...register(key)}
-              checked={watch(key)}
-              onChange={(e) => setValue(key, e.target.checked)}
-              className="form-checkbox h-5 w-5 text-blue-600"
-            />
-            <span className="ml-2 block font-bold">{label}</span>
-          </label>
-        </div>
-      ))}
+      {booleanQuestions.map(({ key, label }) => {
+         if (!(key in register)) {
+          throw new Error(`Chave inválida no formulário: ${key}`);
+        }
+        const isChecked = watch(key as keyof FormValues) as boolean;
+        return (
+          <div key={key} className="my-4">
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                {...register(key as keyof FormValues)}
+                checked={isChecked}
+                onChange={(e) => setValue(key as keyof FormValues, e.target.checked)}
+                className="form-checkbox h-5 w-5 text-blue-600"
+              />
+              <span className="ml-2 block font-bold">{label}</span>
+            </label>
+          </div>
+        );
+      })}
 
 
         <Button type="submit">Enviar</Button>
