@@ -23,6 +23,34 @@ model User {
   createdAt         DateTime? @db.Date
   updatedAt         DateTime? @db.Date
 
+  // Campos adicionais
+  is_pregnant           Boolean?
+  has_children          String?    // Pode ser enum: "Sim, 1-2 filhos", "Sim, 3 ou mais filhos", "Não, nenhum"
+  long_sitting          Boolean?
+  surgical_history      String?    // Tipo de cirurgia anterior
+  previous_cosmetic     Boolean?
+  allergic_history      String?    // Descrição das alergias
+  regular_bowel_function Boolean?
+  exercise_duration     String?    // Tempo praticando atividade física
+  is_smoker             Boolean?
+  alcohol_consumption   Boolean?
+  balanced_diet         Boolean?
+  water_consumption     Boolean?
+  orthopedic_issues     String?    // Problemas ortopédicos
+  medical_treatment     String?    // Tratamento médico atual
+  skin_acids_usage      String?    // Uso de ácidos na pele
+  pacemaker_present     Boolean?
+  metal_presence        String?    // Onde há presença de metais
+  oncologic_history     String?    // Tipo de antecedentes oncológicos
+  menstrual_cycle       String?    // Descrição do ciclo menstrual
+  contraceptive_method  String?    // Método anticonceptivo utilizado
+  varicose_veins        Boolean?
+  lesions_present       Boolean?
+  hypertension          Boolean?
+  hypotension           Boolean?
+  diabetes_type         String?    // Tipo de diabetes, se houver
+  epilepsy              Boolean?
+
   booking  Booking[]
   accounts Account[]
   sessions Session[]
