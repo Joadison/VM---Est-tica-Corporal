@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Footer from "@/src/components/nav/footer";
 import { Toaster } from "@/src/components/ui/sonner";
 import AuthProvider from "../providers/auth";
 import "@uploadthing/react/styles.css";
@@ -20,11 +19,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+      </head>
       <body className={`${inter.className} vi`}>
         <AuthProvider>
           <div className="flex-1">{children}</div>
           <Toaster />
-          <Footer />
         </AuthProvider>
       </body>
     </html>

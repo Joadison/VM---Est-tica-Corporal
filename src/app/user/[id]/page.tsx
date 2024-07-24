@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from '@/src/lib/auth';
 import { db } from '@/src/lib/prisma';
 import { getServerSession } from 'next-auth';
+import Footer from '@/src/components/nav/footer';
 
 interface Props {
   params: {
@@ -36,6 +37,7 @@ const UserPage = async ({ params }: Props) => {
     <>
       <Header/>
       <Users user={useracss} />
+      <Footer />
     </>
   );
 };

@@ -5,6 +5,7 @@ import { db } from "../../lib/prisma";
 import BookingItem from "../../components/booking/booking-item";
 import { authOptions } from "@/src/lib/auth";
 import ServiceItem from "@/src/components/booking/service-item";
+import Footer from "@/src/components/nav/footer";
 
 const BookingsPage = async () => {
   const session = await getServerSession(authOptions);
@@ -88,6 +89,8 @@ const BookingsPage = async () => {
           </>
         )}
       </div>
+      
+      <Footer />
     </>
   );
 };

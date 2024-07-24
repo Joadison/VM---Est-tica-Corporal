@@ -5,6 +5,7 @@ import { db } from "../../lib/prisma";
 import { authOptions } from "@/src/lib/auth";
 import CalendarioADM from "@/src/components/user/CalendarioAdmin";
 import ServiceUpload from "@/src/components/user/service_up";
+import Footer from "@/src/components/nav/footer";
 
 const AdminPage = async () => {
   const allowedEmails = [
@@ -39,7 +40,7 @@ const AdminPage = async () => {
   const service = await db.service.findMany();
 
   return (
-    <div>
+    <>
       <Header />
       <div className="px-5 py-6">
         <div className="pb-2">
@@ -49,7 +50,8 @@ const AdminPage = async () => {
           <CalendarioADM bookings={bookings} />
         </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 };
 

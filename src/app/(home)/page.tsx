@@ -8,6 +8,7 @@ import { ptBR } from "date-fns/locale";
 import Header from "@/src/components/nav/header";
 import ServiceItem from "@/src/components/booking/service-item";
 import BookingItem from "@/src/components/booking/booking-item";
+import Footer from "@/src/components/nav/footer";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
@@ -39,7 +40,7 @@ export default async function Home() {
   ]);
    
   return (
-    <div className="h-full">
+    <>
       <Header/>
       <div className="px-5 py-5">
       <h2 className="text-xl font-bold">
@@ -73,7 +74,8 @@ export default async function Home() {
           )}
         </div>
       </div>
-    </div>
+      <Footer />
+    </>
     
   );
 }

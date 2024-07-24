@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'GlacialIndifference';
+  src: url('../public/font/GlacialIndifference-Regular.otf') format('opentype'),
+       url('../public/font/GlacialIndifference-Bold.otf') format('opentype'),
+       url('../public/font/GlacialIndifference-Italic.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Safira';
+  src: url('../public/font/Safira March.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
 html {
   scroll-behavior: smooth;
 }
@@ -49,8 +66,6 @@ html {
   }
 }
 
-
-/* Estilo para a scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
