@@ -3,9 +3,9 @@ import Header from "../../components/nav/header";
 import { redirect } from "next/navigation";
 import { db } from "../../lib/prisma";
 import { authOptions } from "@/src/lib/auth";
-import CalendarioADM from "@/src/components/user/CalendarioAdmin";
 import ServiceUpload from "@/src/components/user/service_up";
 import Footer from "@/src/components/nav/footer";
+import { GridAtendimento } from "@/src/components/user/gridAtendimento";
 
 const AdminPage = async () => {
   const allowedEmails = [
@@ -46,8 +46,10 @@ const AdminPage = async () => {
         <div className="pb-2">
           <ServiceUpload service={service} />
         </div>
-        <div className="pb-2">
-          <CalendarioADM bookings={bookings} />
+        <div className="pb-2 h-auto mx-9">
+          <h1>Agendados</h1>
+          <GridAtendimento bookings={bookings}/>
+          {/* <CalendarioADM bookings={bookings} /> */}
         </div>
       </div>
       <Footer />

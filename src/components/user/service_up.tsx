@@ -118,7 +118,7 @@ const ServiceUpload = ({ service }: ServiceProps) => {
   };
 
   return (
-    <div className="h-auto">
+    <div className="h-auto mx-9">
       <Dialog>
         <DialogTrigger asChild>
           <Button variant="outline">

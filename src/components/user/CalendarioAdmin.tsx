@@ -1,7 +1,7 @@
-"use client";
+/* "use client";
 
 import { ptBR } from "date-fns/locale";
-import { Calendar } from "../ui/calendar";
+import { Calendar, CalendarPc } from "./calendarPc";
 import { Button } from "../ui/button";
 import { format } from "date-fns";
 import {
@@ -25,10 +25,20 @@ interface CalendarioProps {
 const CalendarioADM = ({ bookings }: CalendarioProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<any>(null);
+  const [selectedDay, setSelectedDay] = useState<Date | null>(null);
+  const [selectedDayBookings, setSelectedDayBookings] = useState<any[]>([]);
 
   const handleDayClick = (booking: any) => {
     setSelectedBooking(booking);
     setIsDialogOpen(true);
+  };
+
+  const handleDateClick = (date: Date) => {
+    setSelectedDay(date);
+    const dayBookings = bookings.filter(
+      (booking) => new Date(booking.date).toDateString() === date.toDateString()
+    );
+    setSelectedDayBookings(dayBookings);
   };
 
   const handleCancelClick = async (id: string) => {
@@ -37,20 +47,20 @@ const CalendarioADM = ({ bookings }: CalendarioProps) => {
       toast.success("Reserva cancelada com sucesso!");
     } catch (error) {
       console.error(error);
-    } 
+    }
   };
 
-  const renderDay = ({ date }: { date: Date }) => {
+  const renderDayContent = ({ date }: { date: Date }, isPc: boolean) => {
     const dayBookings = bookings.filter(
       (booking) => new Date(booking.date).toDateString() === date.toDateString()
     );
     return (
       <>
-        <div className="flex mt-2 text-xl font-bold bg-red">
+        <div className="flex mt-2 text-xl font-bold bg-red" onClick={() => handleDateClick(date)}>
           {date.getDate()}
         </div>
         {dayBookings.length > 0 && (
-          <div className="absolute top-10 left-0 flex flex-col  max-h-[8rem] overflow-y-auto">
+          <div className="hidden sm:flex absolute top-10 left-0 flex-col max-h-[8rem] overflow-y-auto">
             {dayBookings.map((booking, index) => (
               <Button
                 variant={"outline"}
@@ -75,9 +85,12 @@ const CalendarioADM = ({ bookings }: CalendarioProps) => {
     const lonMatch = address.match(/lon=(-?\d+(\.\d+)?)/);
     const lat = latMatch ? parseFloat(latMatch[1]) : undefined;
     const lon = lonMatch ? parseFloat(lonMatch[1]) : undefined;
-    const cleanAddress = address.replace(/,?\s*lat=-?\d+(\.\d+)?/, '').replace(/,?\s*lon=-?\d+(\.\d+)?/, '').trim();
+    const cleanAddress = address
+      .replace(/,?\s*lat=-?\d+(\.\d+)?/, "")
+      .replace(/,?\s*lon=-?\d+(\.\d+)?/, "")
+      .trim();
 
-    return {cleanAddress, lat, lon };
+    return { cleanAddress, lat, lon };
   };
 
   const getUberUrl = (booking: any) => {
@@ -88,7 +101,7 @@ const CalendarioADM = ({ bookings }: CalendarioProps) => {
         return `uber://?action=setPickup&pickup=my_location&dropoff[latitude]=${lat}&dropoff[longitude]=${lon}&dropoff[nickname]=${cleanAddress}`;
       }
     }
-    return '';
+    return "";
   };
 
   const calculateAge = (birthDate: Date) => {
@@ -96,15 +109,18 @@ const CalendarioADM = ({ bookings }: CalendarioProps) => {
     const birthDateObj = new Date(birthDate);
     let age = today.getFullYear() - birthDateObj.getFullYear();
     const monthDifference = today.getMonth() - birthDateObj.getMonth();
-  
-    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDateObj.getDate())) {
+
+    if (
+      monthDifference < 0 ||
+      (monthDifference === 0 && today.getDate() < birthDateObj.getDate())
+    ) {
       age--;
     }
-  
+
     return age;
   };
 
-  const uberUrl = selectedBooking ? getUberUrl(selectedBooking) : '';
+  const uberUrl = selectedBooking ? getUberUrl(selectedBooking) : "";
 
   return (
     <>
@@ -119,7 +135,15 @@ const CalendarioADM = ({ bookings }: CalendarioProps) => {
               <>
                 <div className="flex flex-col text-left gap-6">
                   <h1>Nome: {selectedBooking.user.name}</h1>
-                  <h1>Data de Nascimento:{" "}{format(new Date(selectedBooking.user.date_brith),"dd/MM/yyyy")} Idade: {calculateAge(new Date(selectedBooking.user.date_brith))}</h1>
+                  <h1>
+                    Data de Nascimento:{" "}
+                    {format(
+                      new Date(selectedBooking.user.date_brith),
+                      "dd/MM/yyyy"
+                    )}{" "}
+                    Idade:{" "}
+                    {calculateAge(new Date(selectedBooking.user.date_brith))}
+                  </h1>
                   <h1>CPF: {selectedBooking.user.cpf}</h1>
                   <h1>E-mail: {selectedBooking.user.email}</h1>
                   <h1>Profissão: {selectedBooking.user.work}</h1>
@@ -156,79 +180,82 @@ const CalendarioADM = ({ bookings }: CalendarioProps) => {
                     </Button>
                   </div>
                   <div className="flex items-center">
-                    <h1>Endereço: {extract(selectedBooking.user.address).cleanAddress}</h1>
+                    <h1>
+                      Endereço:{" "}
+                      {extract(selectedBooking.user.address).cleanAddress}
+                    </h1>
                     <Button
                       className="p-0 m-0"
                       variant={"link"}
                       size={"icon"}
-                      onClick={() =>
-                        window.open(
-                          uberUrl,
-                          "_blank"
-                        )
-                      }
+                      onClick={() => window.open(uberUrl, "_blank")}
                     >
                       <FaUber size={"20"} />
                     </Button>
                   </div>
-                  <h1>Contato de Emergência ou Descrições: {selectedBooking.user.work}</h1>
+                  <h1>
+                    Contato de Emergência ou Descrições:{" "}
+                    {selectedBooking.user.work}
+                  </h1>
                 </div>
               </>
             )}
 
-            <Button className="fex justify-center mt-4" onClick={() => handleCancelClick(selectedBooking.id)}> Cancelar </Button>
+            <Button
+              className="fex justify-center mt-4"
+              onClick={() => handleCancelClick(selectedBooking.id)}
+            >
+              {" "}
+              Cancelar{" "}
+            </Button>
           </DialogDescription>
         </DialogContent>
       </Dialog>
-      <Calendar
-        mode="single"
-        locale={ptBR}
-        fromDate={new Date()}
-        //disabled={{ dayOfWeek: [0, 6] }}
-        components={{ DayContent: renderDay }}
-        styles={{
-          months: { display: "flex", flexDirection: "column", gap: "4rem" },
-          month: {
-            display: "flex",
-            flexDirection: "column",
-            gap: "1rem",
-            fontSize: "1.25rem",
-            fontWeight: "bold",
-          },
-          caption: {
-            display: "flex",
-            justifyContent: "center",
-            paddingTop: "0.25rem",
-            position: "relative",
-            alignItems: "center",
-            textTransform: "capitalize",
-          },
-          caption_label: { fontSize: "1.25rem", fontWeight: "800" },
-          head_row: { display: "flex", width: "100%", marginTop: "0.5rem" },
-          head_cell: {
-            width: "100%",
-            textTransform: "capitalize",
-            fontSize: "1.25rem",
-            marginBottom: "1rem",
-          },
-          cell: {
-            position: "relative",
-            height: "12rem",
-            width: "16rem",
-            margin: "3.50px",
-          },
-          button: { width: "100%" },
-          nav_button_previous: { width: "32px", height: "32px" },
-          nav_button_next: { width: "32px", height: "32px" },
-          table: { width: "100%", borderCollapse: "collapse", gap: "0.25rem" },
-          row: { display: "flex" },
-          day: {
-            padding: "1rem 13.5rem 10.5rem 0",
-          },
-        }}
-      />
+
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex-1">
+          <CalendarPc
+            mode="single"
+            locale={ptBR}
+            fromDate={new Date()}
+            className="flex justify-center items-center w-full mx-0 p-2 sm:p-6"
+            //disabled={{ dayOfWeek: [0, 6] }}
+            components={{
+              DayContent: (props) => renderDayContent(props, true),
+            }}
+          />
+        </div>
+
+        {selectedDay && selectedDayBookings.length > 0 && (
+          <div className="flex-1 p-4 bg-gray-100 rounded-md shadow-md">
+            <h2 className="text-xl font-bold mb-2">
+              Agendamentos para {format(selectedDay, "dd/MM/yyyy")}
+            </h2>
+            <div className="flex space-y-2">
+              {selectedDayBookings.map((booking, index) => (
+                <div
+                  key={index}
+                  className="p-4 border rounded-md shadow-md bg-white"
+                >
+                  <p className="font-semibold">
+                    {format(new Date(booking.date), "HH:mm")} -{" "}
+                    {booking.service.name} - {booking.user.name}
+                  </p>
+                  <Button
+                    variant={"outline"}
+                    onClick={() => handleDayClick(booking)}
+                  >
+                    Ver detalhes
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </>
   );
 };
 
 export default CalendarioADM;
+ */

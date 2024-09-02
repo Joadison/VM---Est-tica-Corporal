@@ -55,7 +55,7 @@ export default async function Home() {
         {confirmedBookings.length > 0 && (
           <>
             <h2 className="pl-5 text-sm mb-3 uppercase text-gray-500 font-bold">Agendamentos</h2>
-            <div className="mx-2 flex gap-3 overflow-x-auto">
+            <div className="mx-2 flex gap-3 overflow-x-auto w-[35rem]">
               {confirmedBookings.map((booking) => (
                 <BookingItem key={booking.id} booking={booking} />
               ))}
