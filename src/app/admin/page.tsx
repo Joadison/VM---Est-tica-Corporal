@@ -42,11 +42,11 @@ const AdminPage = async () => {
   return (
     <>
       <Header />
-      <div className="px-5 py-6">
+      <div className="px-2 py-6">
         <div className="pb-2">
           <ServiceUpload service={service} />
         </div>
-        <div className="pb-2 h-auto mx-9">
+        <div className="pb-2 h-auto mx-2">
           <h1>Agendados</h1>
           <GridAtendimento bookings={bookings}/>
           {/* <CalendarioADM bookings={bookings} /> */}
